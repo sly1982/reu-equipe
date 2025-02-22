@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZENITH PHARMA</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .container {
+            position: absolute;
+            top: 10%;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        p {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .keypad {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .key {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            background: darkblue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .key:active {
+            background: lightblue;
+        }
+        #codeDisplay {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+        #result {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div class="container">
+        <h1>ZENITH PHARMA</h1>
+        <p>Insérez le code secret pour passer à l'étape supérieure</p>
+        <div id="codeDisplay">Code: </div>
+        <div class="keypad">
+            <button class="key" onclick="enterDigit(0)">0</button>
+            <button class="key" onclick="enterDigit(1)">1</button>
+            <button class="key" onclick="enterDigit(2)">2</button>
+            <button class="key" onclick="enterDigit(3)">3</button>
+            <button class="key" onclick="enterDigit(4)">4</button>
+            <button class="key" onclick="enterDigit(5)">5</button>
+            <button class="key" onclick="enterDigit(6)">6</button>
+            <button class="key" onclick="enterDigit(7)">7</button>
+            <button class="key" onclick="enterDigit(8)">8</button>
+            <button class="key" onclick="enterDigit(9)">9</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const matrixCanvas = document.getElementById("matrix");
+        const ctx = matrixCanvas.getContext("2d");
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+        const letters = "0123456789";
+        const fontSize = 20;
+        const columns = matrixCanvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(0);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            ctx.fillStyle = "blue";
+            ctx.font = `${fontSize}px monospace`;
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        let enteredCode = "";
+        function enterDigit(digit) {
+            if (enteredCode.length < 3) {
+                enteredCode += digit;
+                document.getElementById("codeDisplay").textContent = "Code: " + enteredCode;
+            }
+            if (enteredCode.length === 3) {
+                validateCode();
+            }
+        }
+
+        function validateCode() {
+            const resultElement = document.getElementById("result");
+            if (enteredCode === "980") {
+                resultElement.textContent = "CORRECT";
+                resultElement.style.color = "green";
+            } else {
+                resultElement.textContent = "INCORRECT";
+                resultElement.style.color = "red";
+            }
+            setTimeout(() => {
+                enteredCode = "";
+                document.getElementById("codeDisplay").textContent = "Code: ";
+                resultElement.textContent = "";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
